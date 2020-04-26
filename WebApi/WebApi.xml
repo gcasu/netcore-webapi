@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebApi</name>
+    </assembly>
+    <members>
+        <member name="M:WebApi.Controllers.OrdersController.GetPagedResultsAsync(System.Int32,System.Int32)">
+            <summary>
+            Returns a paged  list of orders.
+            </summary>
+            <param name="pageIndex">Page index.</param>
+            <param name="pageSize">Page size.</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.OrdersController.AddAsync(WebApi.ViewModels.OrderViewModel)">
+            <summary>
+            Adds a new order for a company.
+            </summary>
+            <param name="viewModel">Order info.</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.ProductsController.AddAsync(WebApi.ViewModels.ProductViewModel)">
+            <summary>
+            Adds a new product to the store.
+            </summary>
+            <param name="viewModel">Product info.</param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.ProductsController.GetAllAsync">
+            <summary>
+            Returns all the products in the store.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Controllers.ProductsController.GetAsync(System.Int32)">
+            <summary>
+            Returns a single product from the store.
+            </summary>
+            <param name="id">Product progressive identifier.</param>
+            <returns></returns>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.OrderDto.Id">
+            <summary>
+            Order progressive identifier.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.OrderDto.Total">
+            <summary>
+            Total amount of the order.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.OrderDto.Date">
+            <summary>
+            Date of the order.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.OrderDto.Company">
+            <summary>
+            Company that made the order.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.OrderDto.Products">
+            <summary>
+            List of ordered products.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.ProductOrderDto.Id">
+            <summary>
+            Product order progressive identifier.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.ProductOrderDto.Name">
+            <summary>
+            Product name.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.ProductOrderDto.Description">
+            <summary>
+            Product description.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.ProductOrderDto.Price">
+            <summary>
+            Product unit price.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.ProductOrderDto.Quantity">
+            <summary>
+            Produce order quantity.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.CompanyDto.Id">
+            <summary>
+            Company code.
+            </summary>
+        </member>
+        <member name="P:WebApi.DataTransferObjects.CompanyDto.Name">
+            <summary>
+            Company name.
+            </summary>
+        </member>
+        <member name="M:WebApi.Extensions.ModelsExtensions.ToDto(DAL.Models.Order,BLL.UnitOfWork.IUnitOfWork,Microsoft.Extensions.Caching.Memory.IMemoryCache,AutoMapper.IMapper,BLL.CompanyManager.ICompanyManager)">
+            <summary>
+            Converts and order object to an order data transfer object.
+            </summary>
+            <param name="order"></param>
+            <param name="unitOfWork"></param>
+            <param name="memoryCache"></param>
+            <param name="mapper"></param>
+            <param name="companyManager"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Extensions.ModelStateExtensions.Errors(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary)">
+            <summary>
+            Serializes the model state errors into a human readable object.
+            </summary>
+            <param name="modelState"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Extensions.WebHostExtensions.Seed(Microsoft.Extensions.Hosting.IHost)">
+            <summary>
+            Seed database with basic data.
+            </summary>
+            <param name="host"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebApi.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+        </member>
+        <member name="M:WebApi.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app"></param>
+            <param name="env"></param>
+        </member>
+        <member name="P:WebApi.ViewModels.OrderViewModel.CompanyId">
+            <summary>
+            Company code.
+            </summary>
+        </member>
+        <member name="P:WebApi.ViewModels.OrderViewModel.Products">
+            <summary>
+            List of ordered products.
+            </summary>
+        </member>
+        <member name="P:WebApi.ViewModels.ProductOrderViewModel.ProductId">
+            <summary>
+            Product progressive identifier.
+            </summary>
+        </member>
+        <member name="P:WebApi.ViewModels.ProductOrderViewModel.Quantity">
+            <summary>
+            Product order quantity.
+            </summary>
+        </member>
+        <member name="P:WebApi.ViewModels.ProductViewModel.Name">
+            <summary>
+            Product name.
+            </summary>
+        </member>
+        <member name="P:WebApi.ViewModels.ProductViewModel.Description">
+            <summary>
+            Product description.
+            </summary>
+        </member>
+        <member name="P:WebApi.ViewModels.ProductViewModel.Price">
+            <summary>
+            Product unit price.
+            </summary>
+        </member>
+        <member name="P:WebApi.ViewModels.ProductViewModel.Stock">
+            <summary>
+            Product stock quantity.
+            </summary>
+        </member>
+    </members>
+</doc>
