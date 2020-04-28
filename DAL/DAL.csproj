@@ -15,6 +15,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200428180913_Initial.cs" />
+    <Compile Remove="Migrations\20200428180913_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200428181136_CompanyRemoved.cs" />
+    <Compile Remove="Migrations\20200428181136_CompanyRemoved.Designer.cs" />
+    <Compile Remove="Migrations\ProductsDb\20200428181115_CompanyRemoved.cs" />
+    <Compile Remove="Migrations\ProductsDb\20200428181115_CompanyRemoved.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.3">

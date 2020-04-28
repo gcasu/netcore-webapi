@@ -5,30 +5,25 @@ using System;
 
 namespace DAL.Configurations
 {
-    public class CompanyEntityTypeConfiguration : IEntityTypeConfiguration<Company>
-    {
-        public void Configure(EntityTypeBuilder<Company> builder)
-        {
-            builder.HasKey(e => e.Id);
-            builder.Property(e => e.Id).HasMaxLength(64);
-            builder.Property(e => e.Name).HasMaxLength(128);
-        }
-    }
-
+    /// <summary>
+    /// Configures Order entity.
+    /// </summary>
     class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.HasKey(e => e.Id);
-            builder.HasOne(e => e.Company).WithMany().HasForeignKey(e => e.CompanyId);
             builder.HasMany(e => e.Products).WithOne().HasForeignKey(e => e.OrderId);
-            builder.Property(e => e.Date).HasColumnType("datetime2").HasDefaultValue(DateTime.Now);
+            builder.Property(e => e.Date).HasColumnType("datetime2");
             builder.HasIndex(e => e.Date);
             builder.Property(e => e.CompanyId).IsRequired().HasMaxLength(64);
             builder.HasIndex(e => e.CompanyId);
         }
     }
 
+    /// <summary>
+    /// Configures Product entity.
+    /// </summary>
     public class ProductEntityTypeConfiguration : IEntityTypeConfiguration<Product>
     {
         public void Configure(EntityTypeBuilder<Product> builder)
@@ -36,10 +31,14 @@ namespace DAL.Configurations
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Name).IsRequired().HasMaxLength(64);
             builder.Property(e => e.Description).IsRequired().HasMaxLength(128);
+            // Ensure uniqueness of the couple name - description
             builder.HasIndex(e => new { e.Name, e.Description }).IsUnique();
         }
     }
 
+    /// <summary>
+    /// Configures ProductOrder entity.
+    /// </summary>
     public class ProductOrderEntityTypeConfiguration : IEntityTypeConfiguration<ProductOrder>
     {
         public void Configure(EntityTypeBuilder<ProductOrder> builder)

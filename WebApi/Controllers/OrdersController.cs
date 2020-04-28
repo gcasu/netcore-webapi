@@ -8,13 +8,18 @@ using BLL.UnitOfWork;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using WebApi.Exceptions;
 using WebApi.Extensions;
 using WebApi.ViewModels;
+using static WebApi.Strings.Strings;
 
 namespace WebApi.Controllers
 {
+    /// <summary>
+    /// Exposes Orders resource.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
@@ -23,14 +28,16 @@ namespace WebApi.Controllers
         private readonly ILogger<OrdersController> logger;
         private readonly IUnitOfWork unitOfWork;
         private readonly ICompanyManager companyManager;
+        private readonly IConfiguration configuration;
         private readonly IMemoryCache memoryCache;
         private readonly IMapper mapper;
 
-        public OrdersController(IUnitOfWork unitOfWork, IMemoryCache memoryCache, IMapper mapper, ICompanyManager companyManager, ILogger<OrdersController> logger)
+        public OrdersController(IUnitOfWork unitOfWork, IMemoryCache memoryCache, IMapper mapper, ICompanyManager companyManager, IConfiguration configuration, ILogger<OrdersController> logger)
         {
             this.unitOfWork = unitOfWork;
             this.memoryCache = memoryCache;
             this.companyManager = companyManager;
+            this.configuration = configuration;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -62,35 +69,45 @@ namespace WebApi.Controllers
                 return new BadRequestObjectResult(ModelState.Errors());
 
             Order order = mapper.Map<Order>(viewModel);
+            order.Date = DateTime.Now;
 
-            if ((await unitOfWork.CompanyRepository.GetAsync(order.CompanyId)) == null)
-                return new BadRequestObjectResult($"Cannot find any company with id {order.CompanyId}.");
+            // Check if company exists
+            if (companyManager.GetCompany(order.CompanyId) == null)
+                return new BadRequestObjectResult(string.Format(CompanyNotFound, order.CompanyId));
 
+            // Check if exists another order today
             if (await unitOfWork.OrderRepository.ExistsOrderToday(order.CompanyId))
-                return new BadRequestObjectResult("You have already done an order today.");
+                return new BadRequestObjectResult(OrdersExceeded);
 
             double total = 0d;
-            var updatedProducts = new List<Product>();
+            var updatedProducts = new List<Product>(); // Store the products to update later
             foreach (var productOrder in order.Products)
             {
+                // Get the product from cache if exists, otherwise query the database
                 if (!memoryCache.TryGetValue(productOrder.ProductId, out Product product))
                     product = await unitOfWork.ProductRepository.GetAsync(productOrder.ProductId);
 
+                // Return an error if the product does not exist
                 if (product == null)
-                    throw new ProductNotFoundException(product.Id);
+                    throw new ProductNotFoundException(string.Format(ProductNotFound, productOrder.ProductId));
 
+                // Quantity must be available
                 if (productOrder.Quantity > product.Stock)
-                    return new BadRequestObjectResult($"You have exceeded the stock quantity for product {product.Id}: {product.Stock} products left.");
+                    return new BadRequestObjectResult(string.Format(StockExceeded, product.Id, product.Stock));
 
+                // Update product stock
                 unitOfWork.ProductRepository.SubtractFromStock(product, productOrder.Quantity);
                 updatedProducts.Add(product);
 
+                // Calculate partial total
                 productOrder.Price = product.Price;
                 total += productOrder.Price * productOrder.Quantity;
             }
 
-            if (total < 100)
-                return new BadRequestObjectResult("Total spent must be at least equal to 100.");
+            // Check the minimum total spent
+            double minTotalSpent = double.Parse(configuration["Order:MinimumTotalSpent"]);
+            if (total < minTotalSpent)
+                return new BadRequestObjectResult(string.Format(MinimumTotalSpent, minTotalSpent));
 
             try
             {
@@ -99,11 +116,13 @@ namespace WebApi.Controllers
             }
             catch (Exception e)
             {
-                return new BadRequestObjectResult(e.InnerException?.Message);
+                Console.WriteLine(e);
+                return new BadRequestObjectResult(OrderCreationFailed);
             }
 
+            double absExpiration = double.Parse(configuration["Cache:AbsoluteExpiration"]);
             foreach (var product in updatedProducts)
-                memoryCache.Set(product.Id, product, TimeSpan.FromHours(1));
+                memoryCache.Set(product.Id, product, TimeSpan.FromMinutes(absExpiration));
 
             return new OkObjectResult(await order.ToDto(unitOfWork, memoryCache, mapper, companyManager));
         }

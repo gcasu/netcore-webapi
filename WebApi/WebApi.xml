@@ -4,6 +4,11 @@
         <name>WebApi</name>
     </assembly>
     <members>
+        <member name="T:WebApi.Controllers.OrdersController">
+            <summary>
+            Exposes Orders resource.
+            </summary>
+        </member>
         <member name="M:WebApi.Controllers.OrdersController.GetPagedResultsAsync(System.Int32,System.Int32)">
             <summary>
             Returns a paged  list of orders.
@@ -18,6 +23,11 @@
             </summary>
             <param name="viewModel">Order info.</param>
             <returns></returns>
+        </member>
+        <member name="T:WebApi.Controllers.ProductsController">
+            <summary>
+            Exposes Products resource.
+            </summary>
         </member>
         <member name="M:WebApi.Controllers.ProductsController.AddAsync(WebApi.ViewModels.ProductViewModel)">
             <summary>
@@ -39,6 +49,11 @@
             <param name="id">Product progressive identifier.</param>
             <returns></returns>
         </member>
+        <member name="T:WebApi.DataTransferObjects.OrderDto">
+            <summary>
+            Order data transfer object.
+            </summary>
+        </member>
         <member name="P:WebApi.DataTransferObjects.OrderDto.Id">
             <summary>
             Order progressive identifier.
@@ -54,14 +69,19 @@
             Date of the order.
             </summary>
         </member>
-        <member name="P:WebApi.DataTransferObjects.OrderDto.Company">
+        <member name="P:WebApi.DataTransferObjects.OrderDto.CompanyId">
             <summary>
-            Company that made the order.
+            Identifier of the company that made the order.
             </summary>
         </member>
         <member name="P:WebApi.DataTransferObjects.OrderDto.Products">
             <summary>
             List of ordered products.
+            </summary>
+        </member>
+        <member name="T:WebApi.DataTransferObjects.ProductOrderDto">
+            <summary>
+            Product order data transfer object.
             </summary>
         </member>
         <member name="P:WebApi.DataTransferObjects.ProductOrderDto.Id">
@@ -89,19 +109,14 @@
             Produce order quantity.
             </summary>
         </member>
-        <member name="P:WebApi.DataTransferObjects.CompanyDto.Id">
+        <member name="T:WebApi.Exceptions.ProductNotFoundException">
             <summary>
-            Company code.
-            </summary>
-        </member>
-        <member name="P:WebApi.DataTransferObjects.CompanyDto.Name">
-            <summary>
-            Company name.
+            Thrown when a product can't be found.
             </summary>
         </member>
         <member name="M:WebApi.Extensions.ModelsExtensions.ToDto(DAL.Models.Order,BLL.UnitOfWork.IUnitOfWork,Microsoft.Extensions.Caching.Memory.IMemoryCache,AutoMapper.IMapper,BLL.CompanyManager.ICompanyManager)">
             <summary>
-            Converts and order object to an order data transfer object.
+            Converts and order entity to an order data transfer object.
             </summary>
             <param name="order"></param>
             <param name="unitOfWork"></param>

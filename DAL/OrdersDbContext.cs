@@ -4,13 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL
 {
+    /// <summary>
+    /// Orders database context.
+    /// </summary>
     public class OrdersDbContext : DbContext
     {
         public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options) { }
 
         public DbSet<Order> Orders { get; set; }
         public DbSet<ProductOrder> ProductOrders { get; set; }
-        public DbSet<Company> Companies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -18,7 +20,6 @@ namespace DAL
 
             builder.ApplyConfiguration(new OrderEntityTypeConfiguration());
             builder.ApplyConfiguration(new ProductOrderEntityTypeConfiguration());
-            builder.ApplyConfiguration(new CompanyEntityTypeConfiguration());
         }
     }
 }

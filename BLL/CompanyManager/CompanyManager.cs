@@ -1,17 +1,23 @@
-﻿using BLL.EvalStrategies;
-using BLL.EvalStrategies.Interfaces;
-using DAL.Models;
+﻿using BLL.Companies;
 
 namespace BLL.CompanyManager
 {
+    /// <summary>
+    /// Factory class that manage the companies in the system.
+    /// </summary>
     public class CompanyManager : ICompanyManager
     {
-        public ITotalStrategy GetTotalStrategy(Company company)
+        /// <summary>
+        /// Returns a company in the system by id.
+        /// </summary>
+        /// <param name="companyId">Company identifier.</param>
+        /// <returns>The company identified by companyId.</returns>
+        public AbstractCompany GetCompany(string companyId)
         {
-            return company.Id switch
+            return companyId switch
             {
-                "COMPANY_1" => new ManagementCostTotalStrategy(),
-                "COMPANY_2" => new AdministrativeCostTotalStrategy(),
+                "COMPANY_1" => new Company_1(),
+                "COMPANY_2" => new Company_2(),
                 _ => null,
             };
         }

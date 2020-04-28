@@ -5,26 +5,33 @@ using BLL.UnitOfWork;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using WebApi.Extensions;
 using WebApi.ViewModels;
+using static WebApi.Strings.Strings;
 
 namespace WebApi.Controllers
 {
+    /// <summary>
+    /// Exposes Products resource.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly ILogger<ProductsController> logger;
         private readonly IUnitOfWork unitOfWork;
+        private readonly IConfiguration configuration;
         private readonly IMemoryCache memoryCache;
         private readonly IMapper mapper;
 
-        public ProductsController(IUnitOfWork unitOfWork, IMemoryCache memoryCache, IMapper mapper, ILogger<ProductsController> logger)
+        public ProductsController(IUnitOfWork unitOfWork, IMemoryCache memoryCache, IConfiguration configuration, IMapper mapper, ILogger<ProductsController> logger)
         {
             this.unitOfWork = unitOfWork;
             this.memoryCache = memoryCache;
             this.mapper = mapper;
+            this.configuration = configuration;
             this.logger = logger;
         }
 
@@ -51,7 +58,8 @@ namespace WebApi.Controllers
                 return new BadRequestObjectResult(e.InnerException?.Message);
             }
 
-            memoryCache.Set(product.Id, product, TimeSpan.FromHours(1));
+            double absExpiration = double.Parse(configuration["Cache:AbsoluteExpiration"]);
+            memoryCache.Set(product.Id, product, TimeSpan.FromMinutes(absExpiration));
 
             return new OkObjectResult(product);
         }
@@ -80,7 +88,10 @@ namespace WebApi.Controllers
                 product = await unitOfWork.ProductRepository.GetAsync(id);
 
             if (product == null)
-                return new NotFoundObjectResult($"Cannot find product with id {id}.");
+                return new NotFoundObjectResult(string.Format(ProductNotFound, id));
+
+            double absExpiration = double.Parse(configuration["Cache:AbsoluteExpiration"]);
+            memoryCache.Set(product.Id, product, TimeSpan.FromMinutes(absExpiration));
 
             return new OkObjectResult(product);
         }

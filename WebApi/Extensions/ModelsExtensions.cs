@@ -7,13 +7,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.DataTransferObjects;
 using WebApi.Exceptions;
+using static WebApi.Strings.Strings;
 
 namespace WebApi.Extensions
 {
     public static class ModelsExtensions
     {
         /// <summary>
-        /// Converts and order object to an order data transfer object.
+        /// Converts and order entity to an order data transfer object.
         /// </summary>
         /// <param name="order"></param>
         /// <param name="unitOfWork"></param>
@@ -30,14 +31,14 @@ namespace WebApi.Extensions
                     product = await unitOfWork.ProductRepository.GetAsync(productOrderDto.Id);
 
                 if (product == null)
-                    throw new ProductNotFoundException(product.Id);
+                    throw new ProductNotFoundException(string.Format(ProductNotFound, productOrderDto.Id));
 
                 // Map missing fields name and description
                 return mapper.Map(product, productOrderDto);
             }));
-            orderDto.Total = companyManager
-                .GetTotalStrategy(order.Company)?
-                .CalculateTotal(orderDto.Products.Sum(p => p.Price * p.Quantity)) ?? throw new CalculateTotalException(order.Id);
+
+            var company = companyManager.GetCompany(order.CompanyId);
+            orderDto.Total = company.TotalStrategy.CalculateTotal(orderDto.Products.Sum(p => p.Price * p.Quantity));
 
             return orderDto;
         }

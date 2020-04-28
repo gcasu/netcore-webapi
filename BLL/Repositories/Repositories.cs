@@ -9,11 +9,9 @@ using System.Threading.Tasks;
 
 namespace BLL.Repositories
 {
-    public class CompanyRepository : Repository<Company, OrdersDbContext>, ICompanyRepository
-    {
-        public CompanyRepository(OrdersDbContext context) : base(context) { }
-    }
-
+    /// <summary>
+    /// Concrete repository for entity type Order.
+    /// </summary>
     public class OrderRepository : Repository<Order, OrdersDbContext>, IOrderRepository
     {
         public OrderRepository(OrdersDbContext context) : base(context) { }
@@ -26,7 +24,8 @@ namespace BLL.Repositories
 
         public override async Task<IEnumerable<Order>> GetAllAsync()
         {
-            return await Entities.Include(e => e.Company).Include(e => e.Products).ToArrayAsync();
+            // Load related entities
+            return await Entities.Include(e => e.Products).ToArrayAsync();
         }
 
         public override async Task<IEnumerable<Order>> GetPagedResultsAsync(int pageIndex, int pageSize)
@@ -35,15 +34,22 @@ namespace BLL.Repositories
                 Entities.Skip((pageIndex - 1) * pageSize).Take(pageSize) :
                 Entities.Take(pageSize);
 
-            return await pageResults.Include(e => e.Company).Include(e => e.Products).ToArrayAsync();
+            // Load related entities
+            return await pageResults.Include(e => e.Products).ToArrayAsync();
         }
     }
 
+    /// <summary>
+    /// Concrete repository for entity type ProductOrder.
+    /// </summary>
     public class ProductOrderRepository : Repository<ProductOrder, OrdersDbContext>, IProductOrderRepository
     {
         public ProductOrderRepository(OrdersDbContext context) : base(context) { }
     }
 
+    /// <summary>
+    /// Concrete repository for entity type Product.
+    /// </summary>
     public class ProductRepository : Repository<Product, ProductsDbContext>, IProductRepository
     {
         public ProductRepository(ProductsDbContext context) : base(context) { }

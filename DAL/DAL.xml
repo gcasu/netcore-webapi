@@ -4,5 +4,110 @@
         <name>DAL</name>
     </assembly>
     <members>
+        <member name="T:DAL.Configurations.OrderEntityTypeConfiguration">
+            <summary>
+            Configures Order entity.
+            </summary>
+        </member>
+        <member name="T:DAL.Configurations.ProductEntityTypeConfiguration">
+            <summary>
+            Configures Product entity.
+            </summary>
+        </member>
+        <member name="T:DAL.Configurations.ProductOrderEntityTypeConfiguration">
+            <summary>
+            Configures ProductOrder entity.
+            </summary>
+        </member>
+        <member name="T:DAL.Models.Order">
+            <summary>
+            Order entity data model.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Order.Id">
+            <summary>
+            Order progressive identifier.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Order.Date">
+            <summary>
+            Date of the order.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Order.CompanyId">
+            <summary>
+            identifier of the company that made the order.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Order.Products">
+            <summary>
+            List of ordered products.
+            </summary>
+        </member>
+        <member name="T:DAL.Models.Product">
+            <summary>
+            Product entity data model.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Product.Id">
+            <summary>
+            Product progressive identifier.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Product.Name">
+            <summary>
+            Product name.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Product.Description">
+            <summary>
+            Product description.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Product.Price">
+            <summary>
+            Product unit price.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.Product.Stock">
+            <summary>
+            Stock quantity.
+            </summary>
+        </member>
+        <member name="T:DAL.Models.ProductOrder">
+            <summary>
+            ProductOrder entity data model.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.ProductOrder.ProductId">
+            <summary>
+            Product progressive identifier.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.ProductOrder.OrderId">
+            <summary>
+            Order progressive identifier.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.ProductOrder.Quantity">
+            <summary>
+            Quantity ordered.
+            </summary>
+        </member>
+        <member name="P:DAL.Models.ProductOrder.Price">
+            <summary>
+            Product unit price.
+            </summary>
+        </member>
+        <member name="T:DAL.OrdersDbContext">
+            <summary>
+            Orders database context.
+            </summary>
+        </member>
+        <member name="T:DAL.ProductsDbContext">
+            <summary>
+            Products database context.
+            </summary>
+        </member>
     </members>
 </doc>

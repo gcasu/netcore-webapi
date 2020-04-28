@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL
 {
+    /// <summary>
+    /// Products database context.
+    /// </summary>
     public class ProductsDbContext : DbContext
     {
         public ProductsDbContext(DbContextOptions<ProductsDbContext> options) : base(options) { }
