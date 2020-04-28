@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace BLL.Repositories
 {
-
+    /// <summary>
+    /// Contains base repository methods for an entity type.
+    /// </summary>
+    /// <typeparam name="TEntity">Entity type.</typeparam>
+    /// <typeparam name="TContext">Database context.</typeparam>
     public class Repository<TEntity, TContext> : IRepository<TEntity> where TEntity : class where TContext : DbContext
     {
         protected TContext DbContext { get; }

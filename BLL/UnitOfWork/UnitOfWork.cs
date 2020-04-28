@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BLL.UnitOfWork
 {
+    /// <summary>
+    /// Allows to access all the entities repositories.
+    /// </summary>
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly OrdersDbContext ordersDbContext;
@@ -20,9 +23,6 @@ namespace BLL.UnitOfWork
         private IProductRepository _ProductRepository;
         public IProductRepository ProductRepository { get => _ProductRepository ?? (_ProductRepository = new ProductRepository(productsDbContext)); }
 
-        private ICompanyRepository _CompanyRepository;
-        public ICompanyRepository CompanyRepository { get => _CompanyRepository ?? (_CompanyRepository = new CompanyRepository(ordersDbContext)); }
-
         private IOrderRepository _OrderRepository;
         public IOrderRepository OrderRepository { get => _OrderRepository ?? (_OrderRepository = new OrderRepository(ordersDbContext)); }
 
@@ -31,8 +31,38 @@ namespace BLL.UnitOfWork
 
         public async Task SaveChangesAsync()
         {
-            await ordersDbContext.SaveChangesAsync();
-            await productsDbContext.SaveChangesAsync();
+            // Start a new transaction for the products
+            var productsTransaction = await productsDbContext.Database.BeginTransactionAsync();
+            try
+            {
+                // Save all changes to the database
+                await productsDbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                // Discard all changes if something fails
+                await productsTransaction.RollbackAsync();
+                throw e;
+            }
+
+            // Start a new transaction for the orders
+            var ordersTransaction = await ordersDbContext.Database.BeginTransactionAsync();
+            try
+            {
+                // Save all changes to the database
+                await ordersDbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                // Discard all changes if something fails
+                await ordersTransaction.RollbackAsync();
+                await productsTransaction.RollbackAsync();
+                throw e;
+            }
+
+            // Commit all changes if saved successfully
+            await productsTransaction.CommitAsync();
+            await ordersTransaction.CommitAsync();
         }
 
         public void Dispose()

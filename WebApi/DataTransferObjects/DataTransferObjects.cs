@@ -2,6 +2,9 @@
 
 namespace WebApi.DataTransferObjects
 {
+    /// <summary>
+    /// Order data transfer object.
+    /// </summary>
     public class OrderDto
     {
         /// <summary>
@@ -17,15 +20,18 @@ namespace WebApi.DataTransferObjects
         /// </summary>
         public DateTime Date { get; set; }
         /// <summary>
-        /// Company that made the order.
+        /// Identifier of the company that made the order.
         /// </summary>
-        public CompanyDto Company { get; set; }
+        public string CompanyId { get; set; }
         /// <summary>
         /// List of ordered products.
         /// </summary>
         public ProductOrderDto[] Products { get; set; }
     }
 
+    /// <summary>
+    /// Product order data transfer object.
+    /// </summary>
     public class ProductOrderDto
     {
         /// <summary>
@@ -48,17 +54,5 @@ namespace WebApi.DataTransferObjects
         /// Produce order quantity.
         /// </summary>
         public int Quantity { get; set; }
-    }
-
-    public class CompanyDto
-    {
-        /// <summary>
-        /// Company code.
-        /// </summary>
-        public string Id { get; set; }
-        /// <summary>
-        /// Company name.
-        /// </summary>
-        public string Name { get; set; }
     }
 }

@@ -1,8 +1,4 @@
-﻿using DAL;
-using DAL.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Linq;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace WebApi.Extensions
 {
@@ -15,19 +11,11 @@ namespace WebApi.Extensions
         /// <returns></returns>
         public static IHost Seed(this IHost host)
         {
-            using (var scope = host.Services.CreateScope())
-            {
-                var ordersDbContext = scope.ServiceProvider.GetService<OrdersDbContext>();
-
-                if (!ordersDbContext.Companies.Any())
-                {
-                    ordersDbContext.Companies.AddRange(
-                        new Company { Id = "COMPANY_1", Name = "COMPANY_1" },
-                        new Company { Id = "COMPANY_2", Name = "COMPANY_2" });
-
-                    ordersDbContext.SaveChanges();
-                }
-            }
+            //using (var scope = host.Services.CreateScope())
+            //{
+            //    var ordersDbContext = scope.ServiceProvider.GetService<OrdersDbContext>();
+            //    var productsDbContext = scope.ServiceProvider.GetService<ProductsDbContext>();
+            //}
             return host;
         }
     }

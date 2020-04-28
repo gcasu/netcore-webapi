@@ -2,13 +2,11 @@
 
 namespace WebApi.Exceptions
 {
+    /// <summary>
+    /// Thrown when a product can't be found.
+    /// </summary>
     public class ProductNotFoundException : Exception
     {
-        public ProductNotFoundException(int productId) : base($"Cannot find product with id {productId}.") { }
-    }
-
-    public class CalculateTotalException : Exception
-    {
-        public CalculateTotalException(int orderId) : base($"Cannot calculate total for order {orderId}.") { }
+        public ProductNotFoundException(string message = null) : base(message) { }
     }
 }

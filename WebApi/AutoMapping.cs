@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BLL.Companies;
 using DAL.Models;
 using WebApi.DataTransferObjects;
 using WebApi.ViewModels;
@@ -16,9 +17,10 @@ namespace WebApi
 
             // Models to DataTransferObjects
             CreateMap<Order, OrderDto>(MemberList.None);
-            CreateMap<Product, ProductOrderDto>(MemberList.None).ForMember(dest => dest.Price, options => options.Ignore());
-            CreateMap<ProductOrder, ProductOrderDto>(MemberList.None).ForMember(dest => dest.Id, options => options.MapFrom(source => source.ProductId));
-            CreateMap<Company, CompanyDto>(MemberList.None);
+            CreateMap<Product, ProductOrderDto>(MemberList.None)
+                .ForMember(dest => dest.Price, options => options.Ignore());
+            CreateMap<ProductOrder, ProductOrderDto>(MemberList.None)
+                .ForMember(dest => dest.Id, options => options.MapFrom(source => source.ProductId));
         }
     }
 }
