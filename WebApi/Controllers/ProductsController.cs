@@ -51,13 +51,14 @@ namespace WebApi.Controllers
             try
             {
                 await unitOfWork.ProductRepository.AddAsync(product);
-                await unitOfWork.SaveChangesAsync();
+                await unitOfWork.SaveProductsAsync();
             }
             catch (Exception e)
             {
                 return new BadRequestObjectResult(e.InnerException?.Message);
             }
 
+            // Add the product in cache
             double absExpiration = double.Parse(configuration["Cache:AbsoluteExpiration"]);
             memoryCache.Set(product.Id, product, TimeSpan.FromMinutes(absExpiration));
 
@@ -85,11 +86,13 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetAsync(int id)
         {
             if (!memoryCache.TryGetValue(id, out Product product))
+            {
                 product = await unitOfWork.ProductRepository.GetAsync(id);
+                if (product == null)
+                    return new NotFoundObjectResult(string.Format(ProductNotFound, id));
+            }
 
-            if (product == null)
-                return new NotFoundObjectResult(string.Format(ProductNotFound, id));
-
+            // Add the product in cache
             double absExpiration = double.Parse(configuration["Cache:AbsoluteExpiration"]);
             memoryCache.Set(product.Id, product, TimeSpan.FromMinutes(absExpiration));
 

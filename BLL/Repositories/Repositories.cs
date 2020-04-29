@@ -16,10 +16,9 @@ namespace BLL.Repositories
     {
         public OrderRepository(OrdersDbContext context) : base(context) { }
 
-        public async Task<bool> ExistsOrderToday(string companyId)
+        public async Task<bool> ExistsOrderInDate(string companyId, DateTime date)
         {
-            DateTime today = DateTime.Today;
-            return await Entities.AnyAsync(o => o.CompanyId.Equals(companyId) && o.Date.Date == today);
+            return await Entities.AnyAsync(o => o.CompanyId.Equals(companyId) && o.Date.Date == date.Date);
         }
 
         public override async Task<IEnumerable<Order>> GetAllAsync()

@@ -21,9 +21,14 @@ namespace BLL.UnitOfWork
         /// </summary>
         public IProductOrderRepository ProductOrderRepository { get; }
         /// <summary>
-        /// Commits changes to behind databases.
+        /// Commits changes to Products database.
         /// </summary>
         /// <returns></returns>
-        Task SaveChangesAsync();
+        Task SaveProductsAsync();
+        /// <summary>
+        /// Commits changes to Orders database, keeping Products database updated.
+        /// </summary>
+        /// <returns></returns>
+        Task SaveOrdersAsync();
     }
 }

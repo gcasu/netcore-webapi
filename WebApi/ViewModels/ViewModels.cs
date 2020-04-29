@@ -2,6 +2,9 @@
 
 namespace WebApi.ViewModels
 {
+    /// <summary>
+    /// Order view model.
+    /// </summary>
     public class OrderViewModel
     {
         /// <summary>
@@ -16,6 +19,9 @@ namespace WebApi.ViewModels
         public ProductOrderViewModel[] Products { get; set; }
     }
 
+    /// <summary>
+    /// Product Order view model.
+    /// </summary>
     public class ProductOrderViewModel
     {
         /// <summary>
@@ -30,6 +36,9 @@ namespace WebApi.ViewModels
         public int Quantity { get; set; }
     }
 
+    /// <summary>
+    /// Product view model.
+    /// </summary>
     public class ProductViewModel
     {
         /// <summary>

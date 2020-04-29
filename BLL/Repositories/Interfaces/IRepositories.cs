@@ -1,4 +1,5 @@
 ﻿using DAL.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace BLL.Repositories.Interfaces
@@ -29,10 +30,11 @@ namespace BLL.Repositories.Interfaces
     public interface IOrderRepository : IRepository<Order>
     {
         /// <summary>
-        /// Checks whether exists an order done today for the specified company.
+        /// Checks whether exists an order done in the specified date for the specified company.
         /// </summary>
-        /// <param name="companyId"></param>
+        /// <param name="companyId">Identifier of the company.</param>
+        /// <param name="date">Date to check for an order.</param>
         /// <returns>True if exists, false otherwise.</returns>
-        public Task<bool> ExistsOrderToday(string companyId);
+        public Task<bool> ExistsOrderInDate(string companyId, DateTime date);
     }
 }

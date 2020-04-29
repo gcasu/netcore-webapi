@@ -7,6 +7,6 @@ namespace WebApi.Exceptions
     /// </summary>
     public class ProductNotFoundException : Exception
     {
-        public ProductNotFoundException(string message = null) : base(message) { }
+        public ProductNotFoundException(string message) : base(message) { }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using WebApi.DataTransferObjects;
 using WebApi.Exceptions;
 using WebApi.Extensions;
 using WebApi.ViewModels;
@@ -43,7 +44,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Returns a paged  list of orders.
+        /// Returns a paged list of orders.
         /// </summary>
         /// <param name="pageIndex">Page index.</param>
         /// <param name="pageSize">Page size.</param>
@@ -51,8 +52,28 @@ namespace WebApi.Controllers
         [HttpGet("{pageIndex}/{pageSize}")]
         public async Task<IActionResult> GetPagedResultsAsync(int pageIndex, int pageSize)
         {
-            var results = await Task.WhenAll((await unitOfWork.OrderRepository.GetPagedResultsAsync(pageIndex, pageSize))
-                .Select(async order => await order.ToDto(unitOfWork, memoryCache, mapper, companyManager)));
+            var results = new List<OrderDto>();
+            var orders = await unitOfWork.OrderRepository.GetPagedResultsAsync(pageIndex, pageSize);
+
+            foreach (var order in orders)
+            {
+                var products = new List<Product>();
+                foreach (var productOrder in order.Products)
+                {
+                    // Get the product from cache if exists, otherwise query the database
+                    if (!memoryCache.TryGetValue(productOrder.ProductId, out Product product))
+                        product = await unitOfWork.ProductRepository.GetAsync(productOrder.ProductId);
+
+                    products.Add(product);
+                }
+
+                // Calculate the total for the company
+                double total = companyManager
+                    .GetCompany(order.CompanyId).TotalStrategy
+                    .CalculateTotal(order.Products.Sum(p => p.Price * p.Quantity));
+
+                results.Add(order.ToDto(total, products, mapper));
+            }
 
             return new OkObjectResult(results);
         }
@@ -72,11 +93,12 @@ namespace WebApi.Controllers
             order.Date = DateTime.Now;
 
             // Check if company exists
-            if (companyManager.GetCompany(order.CompanyId) == null)
+            var company = companyManager.GetCompany(order.CompanyId);
+            if (company == null)
                 return new BadRequestObjectResult(string.Format(CompanyNotFound, order.CompanyId));
 
             // Check if exists another order today
-            if (await unitOfWork.OrderRepository.ExistsOrderToday(order.CompanyId))
+            if (await unitOfWork.OrderRepository.ExistsOrderInDate(order.CompanyId, order.Date))
                 return new BadRequestObjectResult(OrdersExceeded);
 
             double total = 0d;
@@ -85,11 +107,12 @@ namespace WebApi.Controllers
             {
                 // Get the product from cache if exists, otherwise query the database
                 if (!memoryCache.TryGetValue(productOrder.ProductId, out Product product))
+                {
                     product = await unitOfWork.ProductRepository.GetAsync(productOrder.ProductId);
-
-                // Return an error if the product does not exist
-                if (product == null)
-                    throw new ProductNotFoundException(string.Format(ProductNotFound, productOrder.ProductId));
+                    // Return an error if the product does not exist
+                    if (product == null)
+                        return new BadRequestObjectResult(string.Format(ProductNotFound, productOrder.ProductId));
+                }
 
                 // Quantity must be available
                 if (productOrder.Quantity > product.Stock)
@@ -112,7 +135,7 @@ namespace WebApi.Controllers
             try
             {
                 await unitOfWork.OrderRepository.AddAsync(order);
-                await unitOfWork.SaveChangesAsync();
+                await unitOfWork.SaveOrdersAsync();
             }
             catch (Exception e)
             {
@@ -120,11 +143,15 @@ namespace WebApi.Controllers
                 return new BadRequestObjectResult(OrderCreationFailed);
             }
 
+            // Add the updated products in cache
             double absExpiration = double.Parse(configuration["Cache:AbsoluteExpiration"]);
             foreach (var product in updatedProducts)
                 memoryCache.Set(product.Id, product, TimeSpan.FromMinutes(absExpiration));
 
-            return new OkObjectResult(await order.ToDto(unitOfWork, memoryCache, mapper, companyManager));
+            // Calculate the total for the company
+            total = company.TotalStrategy.CalculateTotal(total);
+
+            return new OkObjectResult(order.ToDto(total, updatedProducts, mapper));
         }
     }
 }

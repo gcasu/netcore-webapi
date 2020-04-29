@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BLL.Companies;
 using DAL.Models;
 using WebApi.DataTransferObjects;
 using WebApi.ViewModels;

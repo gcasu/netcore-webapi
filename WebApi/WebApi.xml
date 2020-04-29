@@ -11,7 +11,7 @@
         </member>
         <member name="M:WebApi.Controllers.OrdersController.GetPagedResultsAsync(System.Int32,System.Int32)">
             <summary>
-            Returns a paged  list of orders.
+            Returns a paged list of orders.
             </summary>
             <param name="pageIndex">Page index.</param>
             <param name="pageSize">Page size.</param>
@@ -114,15 +114,14 @@
             Thrown when a product can't be found.
             </summary>
         </member>
-        <member name="M:WebApi.Extensions.ModelsExtensions.ToDto(DAL.Models.Order,BLL.UnitOfWork.IUnitOfWork,Microsoft.Extensions.Caching.Memory.IMemoryCache,AutoMapper.IMapper,BLL.CompanyManager.ICompanyManager)">
+        <member name="M:WebApi.Extensions.ModelsExtensions.ToDto(DAL.Models.Order,System.Double,System.Collections.Generic.IEnumerable{DAL.Models.Product},AutoMapper.IMapper)">
             <summary>
-            Converts and order entity to an order data transfer object.
+            Converts an order data entity object to an order data transfer object.
             </summary>
             <param name="order"></param>
-            <param name="unitOfWork"></param>
-            <param name="memoryCache"></param>
+            <param name="total"></param>
+            <param name="products"></param>
             <param name="mapper"></param>
-            <param name="companyManager"></param>
             <returns></returns>
         </member>
         <member name="M:WebApi.Extensions.ModelStateExtensions.Errors(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary)">
@@ -151,6 +150,11 @@
             <param name="app"></param>
             <param name="env"></param>
         </member>
+        <member name="T:WebApi.ViewModels.OrderViewModel">
+            <summary>
+            Order view model.
+            </summary>
+        </member>
         <member name="P:WebApi.ViewModels.OrderViewModel.CompanyId">
             <summary>
             Company code.
@@ -161,6 +165,11 @@
             List of ordered products.
             </summary>
         </member>
+        <member name="T:WebApi.ViewModels.ProductOrderViewModel">
+            <summary>
+            Product Order view model.
+            </summary>
+        </member>
         <member name="P:WebApi.ViewModels.ProductOrderViewModel.ProductId">
             <summary>
             Product progressive identifier.
@@ -169,6 +178,11 @@
         <member name="P:WebApi.ViewModels.ProductOrderViewModel.Quantity">
             <summary>
             Product order quantity.
+            </summary>
+        </member>
+        <member name="T:WebApi.ViewModels.ProductViewModel">
+            <summary>
+            Product view model.
             </summary>
         </member>
         <member name="P:WebApi.ViewModels.ProductViewModel.Name">

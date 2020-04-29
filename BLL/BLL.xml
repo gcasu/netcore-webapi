@@ -95,11 +95,12 @@
             IRepository for entity type Order.
             </summary>
         </member>
-        <member name="M:BLL.Repositories.Interfaces.IOrderRepository.ExistsOrderToday(System.String)">
+        <member name="M:BLL.Repositories.Interfaces.IOrderRepository.ExistsOrderInDate(System.String,System.DateTime)">
             <summary>
-            Checks whether exists an order done today for the specified company.
+            Checks whether exists an order done in the specified date for the specified company.
             </summary>
-            <param name="companyId"></param>
+            <param name="companyId">Identifier of the company.</param>
+            <param name="date">Date to check for an order.</param>
             <returns>True if exists, false otherwise.</returns>
         </member>
         <member name="T:BLL.Repositories.Interfaces.IRepository`1">
@@ -178,9 +179,15 @@
             ProductOrders repository.
             </summary>
         </member>
-        <member name="M:BLL.UnitOfWork.IUnitOfWork.SaveChangesAsync">
+        <member name="M:BLL.UnitOfWork.IUnitOfWork.SaveProductsAsync">
             <summary>
-            Commits changes to behind databases.
+            Commits changes to Products database.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BLL.UnitOfWork.IUnitOfWork.SaveOrdersAsync">
+            <summary>
+            Commits changes to Orders database, keeping Products database updated.
             </summary>
             <returns></returns>
         </member>

@@ -29,7 +29,7 @@ namespace BLL.UnitOfWork
         private IProductOrderRepository _ProductOrderRepository;
         public IProductOrderRepository ProductOrderRepository { get => _ProductOrderRepository ?? (_ProductOrderRepository = new ProductOrderRepository(ordersDbContext)); }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveProductsAsync()
         {
             // Start a new transaction for the products
             var productsTransaction = await productsDbContext.Database.BeginTransactionAsync();
@@ -45,6 +45,12 @@ namespace BLL.UnitOfWork
                 throw e;
             }
 
+            // Commit all changes if saved successfully
+            await productsTransaction.CommitAsync();
+        }
+
+        public async Task SaveOrdersAsync()
+        {
             // Start a new transaction for the orders
             var ordersTransaction = await ordersDbContext.Database.BeginTransactionAsync();
             try
@@ -56,13 +62,26 @@ namespace BLL.UnitOfWork
             {
                 // Discard all changes if something fails
                 await ordersTransaction.RollbackAsync();
+                throw e;
+            }
+
+            // Start a new transaction for the products
+            var productsTransaction = await productsDbContext.Database.BeginTransactionAsync();
+            try
+            {
+                // Save all changes to the database
+                await productsDbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                // Discard all changes if something fails
                 await productsTransaction.RollbackAsync();
+                await ordersTransaction.RollbackAsync();
                 throw e;
             }
 
             // Commit all changes if saved successfully
-            await productsTransaction.CommitAsync();
-            await ordersTransaction.CommitAsync();
+            await Task.WhenAll(ordersTransaction.CommitAsync(), productsTransaction.CommitAsync());
         }
 
         public void Dispose()
